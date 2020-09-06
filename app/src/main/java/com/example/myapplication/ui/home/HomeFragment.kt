@@ -14,7 +14,9 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
 import com.beust.klaxon.Parser
 import com.example.myapplication.R
+import com.github.kittinunf.fuel.core.HeaderValues
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
@@ -22,6 +24,7 @@ import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
+import kotlin.Pair
 
 
 class HomeFragment : Fragment() {
@@ -55,8 +58,11 @@ class HomeFragment : Fragment() {
 //                } }
 //        }
 
-        "http://8f947002cc2e.ngrok.io/mobile-json"
-            .httpGet()
+//        val listHeader: List<Pair<String, Any?>> =
+        var parameters = listOf(Pair("name", "Petre"), Pair("number", 1))
+
+        "http://b6013763f858.ngrok.io/mobile-json"
+            .httpPost(parameters)
             .response{request, response, result ->
                 when(result) {
                     is Result.Failure -> {
@@ -64,7 +70,6 @@ class HomeFragment : Fragment() {
                         Log.d("err -------------------", "")
                     }
                     is Result.Success -> {
-
                         println("1223")
                         val write: InputStream = response.body().toStream()
                         val br = InputStreamReader(write)
