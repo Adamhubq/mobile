@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.myapplication.R
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.result.Result
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
 
@@ -36,27 +38,26 @@ class HomeFragment : Fragment() {
 //
 //        })
 
-//        val test = "http://8f947002cc2e.ngrok.io/mobile-json"
-//            .httpGet().subscribe()
+        val test = "http://8f947002cc2e.ngrok.io/mobile-json"
+            .httpGet()
+            .response{request, response, result ->
+                when(result) {
+                    is Result.Failure -> {
+                        val ex = result.getException()
+                        Log.d("err -------------------", ex.toString())
+                    }
+                    is Result.Success -> {
 
-//            .response{request, response, result ->
-//                when(result) {
-//                    is Result.Failure -> {
-//                        val ex = result.getException()
-//                        Log.d("err -------------------", ex.toString())
-//                    }
-//                    is Result.Success -> {
-//
-//                        val write = response.body().toStream()
-//                        write.read()
-////                        val str = (response is String)
-////                        println(result)
-////                        println(bod.length)
-//                        println(write)
-////                        println(response)
-//                    }
-//                }
-//            }
+                        val write = response.body().toStream()
+                        write.read()
+//                        val str = (response is String)
+//                        println(result)
+//                        println(bod.length)
+                        println(write)
+//                        println(response)
+                    }
+                }
+            }
 
 
         return root
