@@ -22,4 +22,10 @@
         android:name="com.example.myapplication.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/test_let"
+        android:name="com.example.myapplication.ui.notifications.TestLay"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/test_let" />
 </navigation>

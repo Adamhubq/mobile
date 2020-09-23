@@ -5,10 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
@@ -36,6 +40,11 @@ class HomeFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+
+
+        super.onCreate(savedInstanceState)
+
+
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
@@ -43,6 +52,23 @@ class HomeFragment : Fragment() {
         homeViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
+
+        val buts: Button = root.findViewById(R.id.buttons)
+
+
+
+
+        val layut: NavController = Navigation.findNavController(, R.id.nav_host_fragment)
+
+//        buts.setOnClickListener { view ->
+//
+//        }
+
+
+
+
+
+
 
 
 //        val objectRx = Observable.just("pidor").subscribe{data -> println(data)}
@@ -57,7 +83,6 @@ class HomeFragment : Fragment() {
 //                    }
 //                } }
 //        }
-
 //        val listHeader: List<Pair<String, Any?>> =
         var parameters = listOf(Pair("name", "Petre"), Pair("number", 1))
 
@@ -66,7 +91,6 @@ class HomeFragment : Fragment() {
             .response{request, response, result ->
                 when(result) {
                     is Result.Failure -> {
-//                        val ex = result.getException()
                         Log.d("err -------------------", "")
                     }
                     is Result.Success -> {
@@ -78,11 +102,8 @@ class HomeFragment : Fragment() {
                         var i = 0
                         parsed.forEach{ el ->
                             Log.d("tar", el.string("name") as String)
-//                            var st =
                         }
                         println(i)
-//                        val bra1 = Klaxon().parseArray<Array<Any>>(InputStreamReader(write))
-//                        println(bra1)
                     }
                 }
             }
@@ -100,3 +121,7 @@ class HomeFragment : Fragment() {
         return root
     }
 }
+
+//private fun View.findNavController(navView: Int): NavController {
+//
+//}

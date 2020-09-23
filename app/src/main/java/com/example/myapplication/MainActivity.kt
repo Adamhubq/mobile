@@ -89,5 +89,8 @@ class MainActivity : AppCompatActivity() {
 //            val line: String = br.readLine()
 //            Log.d("HTTP-GET", line)
     }
+
+
+    pfun ale
 }
 
