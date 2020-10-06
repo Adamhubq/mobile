@@ -1,33 +1,21 @@
 package com.example.logistics
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import com.beust.klaxon.JsonArray
-import com.beust.klaxon.JsonObject
-import com.github.kittinunf.fuel.httpPost
-import com.github.kittinunf.result.Result
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import kotlinx.android.synthetic.main.base_mech.view.*
-import kotlinx.coroutines.Deferred
-import java.io.BufferedInputStream
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.lang.StringBuilder
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.io.*
+import java.net.HttpURLConnection
 import java.net.URL
-import java.util.*
-import kotlin.concurrent.schedule
-import kotlin.reflect.typeOf
-import kotlinx.coroutines.*
-import kotlin.math.log
 import kotlin.properties.Delegates
 
-private const val CHAR_DATA_API = "https://chargen-api.herokuapp.com/"
+//private const val CHAR_DATA_API = "https://chargen-api.herokuapp.com/"
+
+private const val BASE_URL_API = "http://192.168.9.47:4555/"
 
 private  fun <T> List<T>.rand() = shuffled().first()
 
@@ -39,9 +27,83 @@ private  fun <T> List<T>.rand() = shuffled().first()
 //}
 
 public suspend fun test(): String {
-        val apiData = URL(CHAR_DATA_API).readText()
-        println(apiData)
-        return apiData
+
+
+
+    val pass = "\"password\":\"Rust123456\""
+    val userName = "userName1111"
+    val password = "password1111"
+
+
+
+    val apiData = URL(BASE_URL_API + "api-token-auth/")
+    val conn = apiData.openConnection() as HttpURLConnection
+    conn.requestMethod = "POST"
+    conn.setRequestProperty("Content-Type", "application/json; utf-8")
+    conn.setRequestProperty("Accept", "application/json")
+    conn.doOutput = true
+    val jsonUnput = "{\"username\" : \"Rust\", \"password\" : \"Rust123456\"}"
+    conn.connect()
+    val paramsString: String = jsonUnput
+    val wr = DataOutputStream(conn.outputStream)
+    wr.writeBytes(paramsString)
+    wr.flush()
+    wr.close()
+
+
+    try {
+        val `in`: InputStream = BufferedInputStream(conn.inputStream)
+        val reader = BufferedReader(InputStreamReader(`in`))
+        val result = StringBuilder()
+        var line: String?
+        while (reader.readLine().also { line = it } != null) {
+            result.append(line)
+        }
+        Log.d("test", "result from server: $result")
+    } catch (e: IOException) {
+        e.printStackTrace()
+    } finally {
+        conn?.disconnect()
+    }
+
+
+
+
+
+//     (apiData.openConnection() as HttpURLConnection).run {
+//         requestMethod = "POST"
+//
+////         setRequestProperty("Content-Length", pass)
+////         getOutputStream().run{ write() }
+//
+//
+////        setRequestProperty("password", "Rust123456")
+//        inputStream.bufferedReader().let {
+//            it.lines().forEach{
+//                    line -> println(line)
+//            }
+//        }
+//    }
+
+    return ""
+
+//        return (apiData.openConnection() as HttpURLConnection).run {
+//            requestMethod = "POST"
+//            setRequestProperty("username", "Rust")
+//            setRequestProperty("password", "Rust123456")
+//
+////            = mapOf("username" to listOf("Rust"), "password" to listOf("Rust123456"))
+//
+////            Map<String, List<String>>
+//
+//            inputStream.bufferedReader().let {
+//                it.lines().forEach{
+//                    line -> println(line)
+//                }
+//            }
+//
+//            this.toString()
+//        }
 }
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -64,9 +126,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(p0: View?) {
 
 
-//        GlobalScope.launch{
-//            test()
-//        }
+        GlobalScope.launch{
+            test()
+        }
 
 //        val flag = this.login
 
@@ -78,8 +140,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             this._testInc = 12
         }
-        println(this._testInc)
-        println(this.login)
+//        println(this._testInc)
+//        println(this.login)
 //        if (flag == "") {
 //            val logins = findViewById<TextInputEditText>(R.id.loginInput)
 //            println(logins.text)
