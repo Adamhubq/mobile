@@ -26,84 +26,72 @@ private  fun <T> List<T>.rand() = shuffled().first()
 //    }
 //}
 
-public suspend fun test(): String {
-
-
-
-    val pass = "\"password\":\"Rust123456\""
-    val userName = "userName1111"
-    val password = "password1111"
-
-
-
-    val apiData = URL(BASE_URL_API + "api-token-auth/")
-    val conn = apiData.openConnection() as HttpURLConnection
-    conn.requestMethod = "POST"
-    conn.setRequestProperty("Content-Type", "application/json; utf-8")
-    conn.setRequestProperty("Accept", "application/json")
-    conn.doOutput = true
-    val jsonUnput = "{\"username\" : \"Rust\", \"password\" : \"Rust123456\"}"
-    conn.connect()
-    val paramsString: String = jsonUnput
-    val wr = DataOutputStream(conn.outputStream)
-    wr.writeBytes(paramsString)
-    wr.flush()
-    wr.close()
-
-
-    try {
-        val `in`: InputStream = BufferedInputStream(conn.inputStream)
-        val reader = BufferedReader(InputStreamReader(`in`))
-        val result = StringBuilder()
-        var line: String?
-        while (reader.readLine().also { line = it } != null) {
-            result.append(line)
-        }
-        Log.d("test", "result from server: $result")
-    } catch (e: IOException) {
-        e.printStackTrace()
-    } finally {
-        conn?.disconnect()
+public suspend fun autorized(login: String, password: String): String {
+    val requestParams = mapOf<String, String>("username" to "Rust", "password" to "Rust123456")
+    val route = "api-token-auth/"
+    GlobalScope.launch {
+        postRequest(requestParams, route)
     }
+    return ""
+}
+
+public suspend fun postRequest(mapRequstParams: Map<String, out String>, router: String): String {
 
 
 
+    val apiDataCorut = URL(BASE_URL_API + router)
+    var jsonUnput = "{"
+    lateinit var _response: String
+    _response = ""
+    var incrmenet = mapRequstParams.count() + 1
 
-
-//     (apiData.openConnection() as HttpURLConnection).run {
-//         requestMethod = "POST"
-//
-////         setRequestProperty("Content-Length", pass)
-////         getOutputStream().run{ write() }
-//
-//
-////        setRequestProperty("password", "Rust123456")
-//        inputStream.bufferedReader().let {
-//            it.lines().forEach{
-//                    line -> println(line)
-//            }
+    var arrayKey = mapRequstParams.keys.let {
+//        while (incrmenet < 0) {
+//            println(incrmenet)
+//            incrmenet--
+//            it.elementAt(incrmenet)
 //        }
-//    }
+        it. { line -> mapRequstParams.get(line) }
+//        println(it.elementAt(0))
+//        jsonUnput += """"${it}" : "${mapRequstParams.get(it)}","""
+    }
+    println(arrayKey)
 
     return ""
 
-//        return (apiData.openConnection() as HttpURLConnection).run {
-//            requestMethod = "POST"
-//            setRequestProperty("username", "Rust")
-//            setRequestProperty("password", "Rust123456")
-//
-////            = mapOf("username" to listOf("Rust"), "password" to listOf("Rust123456"))
-//
-////            Map<String, List<String>>
-//
-//            inputStream.bufferedReader().let {
-//                it.lines().forEach{
-//                    line -> println(line)
-//                }
-//            }
-//
-//            this.toString()
-//        }
+
+
+//    map {
+//        println(it)
+//        jsonUnput += """"${it.key}" : "${it.value}","""
+//    }
+
+    jsonUnput += "}"
+
+    val connetion = (apiDataCorut.openConnection() as HttpURLConnection).apply{
+        requestMethod = "POST"
+        setRequestProperty("Content-Type", "application/json; utf-8")
+        setRequestProperty("Accept", "application/json")
+        doOutput = true
+        connect()
+    }
+
+    (connetion.let { DataOutputStream(it.outputStream) } as DataOutputStream)
+        .run {
+            writeBytes(jsonUnput)
+            flush()
+            close()
+        }
+
+    connetion.run {
+        inputStream.bufferedReader().let {
+            it.lines().forEach { line ->
+                println(_response)
+            }
+        }
+    }
+    return _response
+
 }
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -127,7 +115,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
 
         GlobalScope.launch{
-            test()
+            autorized("Rust", "Rust123456")
         }
 
 //        val flag = this.login
